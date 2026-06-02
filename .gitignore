@@ -9,3 +9,6 @@ data/
 .RData
 .Ruserdata
 work.Rproj
+.RDataTmp
+.RData
+.Rhistory

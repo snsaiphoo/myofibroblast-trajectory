@@ -1,3 +1,5 @@
+source("functions/seuratprocess.R")
+
 library(Seurat)
 library(dplyr)
 library(patchwork)
@@ -30,74 +32,27 @@ i7d$condition <- "I7D"
 i30d$condition <- "I30D"
 
 # preprocessing for WT 
-wt[["percent.mt"]] <- PercentageFeatureSet(wt, pattern = "^mt-")
+wt <- plot_qc(wt)
+wt <- filter_qc(wt, 500, 5000, 10)
+wt <- preprocess_pca(wt)
 
-VlnPlot(wt, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+# Doublet Finder for WT
+plot_elbow(wt, ndims = 50)
+pcs_to_use <- 1:25
+bcmvn <- find_best_pk(wt, pcs = pcs_to_use)
+wt <- run_doubletfinder(wt, pcs = 1:25, pK = 0.15)
 
-wt <- subset(
-  wt,
-  subset =
-    nFeature_RNA > 300 &
-    nFeature_RNA < 5000 &
-    percent.mt < 10
-)
+df_col <- grep("DF.classifications", colnames(wt@meta.data), value = TRUE)
 
-wt <- NormalizeData(wt)
+DimPlot(wt, group.by = df_col)
 
-wt <- FindVariableFeatures(wt, selection.method = "vst", nfeatures = 2000)
+singlet_cells <- rownames(wt@meta.data)[wt@meta.data[[df_col]] == "Singlet"]
 
-# Identify the 10 most highly variable genes
-top10 <- head(VariableFeatures(wt), 10)
-
-# plot variable features with and without labels
-plot1 <- FeatureScatter(wt,
-                        feature1 = "nCount_RNA",
-                        feature2 = "percent.mt")
-
-plot2 <- FeatureScatter(wt,
-                        feature1 = "nCount_RNA",
-                        feature2 = "nFeature_RNA")
-plot1 + plot2
-
-all.genes <- rownames(wt)
-wt <- ScaleData(wt, features = all.genes)
-
-wt <- RunPCA(wt, features = VariableFeatures(object = wt))
-
-VizDimLoadings(wt, dims = 1:2, reduction = "pca")
-DimPlot(wt, reduction = "pca") + NoLegend()
-
-# Doublet Finder
-# 1. Find best pK
-sweep.res <- paramSweep(wt, PCs = 1:20)
-sweep.stats <- summarizeSweep(sweep.res)
-bcmvn <- find.pK(sweep.stats)
-
-View(bcmvn)
-
-n_cells <- ncol(wt)
-nExp <- round(0.008 * (n_cells / 1000) * n_cells)
-nExp
-
-wt <- doubletFinder(
-  wt,
-  PCs = 1:20,
-  pN = 0.25,
-  pK = 0.15,
-  nExp = nExp
-)
-
-wt_clean <- subset(
-  wt,
-  subset = DF.classifications_0.25_0.15_185 == "Singlet"
-)
+wt_clean <- subset(wt, cells = singlet_cells)
 
 ncol(wt)
 ncol(wt_clean)
 
-wt <- RunUMAP(wt, dims = 1:30)
-
-DimPlot(
-  wt,
-  group.by = "DF.classifications_0.25_0.15_185"
-)
+cat("Before doublet removal:", ncol(wt), "cells\n")
+cat("After doublet removal:", ncol(wt_clean), "cells\n")
+cat("Removed:", ncol(wt) - ncol(wt_clean), "doublets\n")
