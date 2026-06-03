@@ -2,13 +2,15 @@
 plot_qc <- function(seurat_obj) {
   seurat_obj[["percent.mt"]] <- PercentageFeatureSet(seurat_obj, pattern = "^mt-")
   
+  print(
   VlnPlot(
     seurat_obj,
     features = c("nFeature_RNA", "nCount_RNA", "percent.mt"),
     ncol = 3
-  )
+  ))
   
   return(seurat_obj)
+
 }
 
 # Filtering based off of the Violin Plots
