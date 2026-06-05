@@ -93,7 +93,7 @@ ncol(i1d_clean)
 
 cat("Before doublet removal:", ncol(i1d), "cells\n")
 cat("After doublet removal:", ncol(i1d_clean), "cells\n")
-cat("Removed:", ncol(wt) - ncol(i1d_clean), "doublets\n")
+cat("Removed:", ncol(i1d) - ncol(i1d_clean), "doublets\n")
 
 saveRDS(i1d_clean, "data/i1d_singlets.rds")
 
@@ -121,16 +121,16 @@ ncol(i7d_clean)
 
 cat("Before doublet removal:", ncol(i7d), "cells\n")
 cat("After doublet removal:", ncol(i7d_clean), "cells\n")
-cat("Removed:", ncol(wt) - ncol(i7d_clean), "doublets\n")
+cat("Removed:", ncol(i7d) - ncol(i7d_clean), "doublets\n")
 
-saveRDS(i1d_clean, "data/i7d_singlets.rds")
+saveRDS(i7d_clean, "data/i7d_singlets.rds")
 
 # Preprocessing for I30D
 i30d <- plot_qc(i30d)
 i30d <- filter_qc(i30d, 1000, 6500, 10)
 i30d <- preprocess_pca(i30d)
 
-# Doublet Finder for I7D
+# Doublet Finder for I3D
 plot_elbow(i30d, ndims = 50)
 pcs_to_use <- 1:25
 bcmvn <- find_best_pk(i30d, pcs = pcs_to_use)
@@ -149,7 +149,7 @@ ncol(i30d_clean)
 
 cat("Before doublet removal:", ncol(i30d), "cells\n")
 cat("After doublet removal:", ncol(i30d_clean), "cells\n")
-cat("Removed:", ncol(wt) - ncol(i30d_clean), "doublets\n")
+cat("Removed:", ncol(i30d) - ncol(i30d_clean), "doublets\n")
 
 saveRDS(i30d_clean, "data/i30d_singlets.rds")
 

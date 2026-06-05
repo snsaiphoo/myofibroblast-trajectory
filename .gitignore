@@ -9,6 +9,6 @@ data/
 .RData
 .Ruserdata
 work.Rproj
-.RDataTmp
+.RDataTmp*
 .RData
 .Rhistory
