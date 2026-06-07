@@ -2,7 +2,7 @@ library(Seurat)
 library(SingleR)
 library(celldex)
 library(SingleCellExperiment)
-library(dplyr)
+library(BiocParallel)
 library(ggplot2)
 
 set.seed(123)
@@ -10,84 +10,68 @@ set.seed(123)
 # Load processed Seurat object
 combined <- readRDS("../data/combined_processed_resolutions.rds")
 
-# Set chosen clustering resolution
+# Set clustering resolution
 Idents(combined) <- "RNA_snn_res.0.5"
 
-# Convert Seurat object to SingleCellExperiment
+# Convert to SingleCellExperiment
 sce <- as.SingleCellExperiment(combined)
 
-# Load mouse reference
-ref <- MouseRNAseqData()
+# References
+ref_mouse <- MouseRNAseqData()
+ref_immune <- ImmGenData()
 
-# Run SingleR
-singleR_results <- SingleR(
+# Parallelization
+param <- SnowParam(
+  workers = 4,
+  type = "SOCK"
+)
+
+# Run SingleR using both references
+pred <- SingleR(
   test = sce,
-  ref = ref,
-  labels = ref$label.main
+  ref = list(
+    MouseRNAseq = ref_mouse,
+    ImmGen = ref_immune
+  ),
+  labels = list(
+    ref_mouse$label.main,
+    ref_immune$label.main
+  ),
+  BPPARAM = param
 )
 
-# Add SingleR labels to Seurat metadata
-combined$SingleR_label <- singleR_results$labels
-combined$SingleR_pruned <- singleR_results$pruned.labels
+# Add labels to Seurat object
+combined$cell_type_singleR <- pred$labels
 
-# Plot SingleR annotations
-singleR_umap <- DimPlot(
+# UMAP of SingleR labels
+p_singleR <- DimPlot(
   combined,
   reduction = "umap",
-  group.by = "SingleR_label",
+  group.by = "cell_type_singleR",
   label = TRUE,
-  repel = TRUE
-)
+  repel = TRUE,
+  label.size = 4.5
+) +
+  ggtitle("SingleR Annotation") +
+  theme(
+    plot.title = element_text(
+      hjust = 0.5,
+      face = "bold",
+      size = 16
+    )
+  )
 
-singleR_pruned_umap <- DimPlot(
-  combined,
-  reduction = "umap",
-  group.by = "SingleR_pruned",
-  label = TRUE,
-  repel = TRUE
-)
-
-singleR_umap
-singleR_pruned_umap
-
-# Compare SingleR labels with Seurat clusters
-singleR_cluster_table <- table(
-  combined$RNA_snn_res.0.5,
-  combined$SingleR_label
-)
-
-singleR_cluster_table
-
-# Save SingleR results
-saveRDS(
-  singleR_results,
-  "../data/singleR_results_res0.5.rds"
-)
-
-write.csv(
-  as.data.frame(singleR_cluster_table),
-  "../data/singleR_cluster_table_res0.5.csv",
-  row.names = FALSE
-)
+p_singleR
 
 ggsave(
-  "../figures/singleR_labels_umap.png",
-  singleR_umap,
-  width = 10,
-  height = 8,
+  "../figures/umap_singleR.png",
+  p_singleR,
+  width = 12,
+  height = 9,
   dpi = 300
 )
 
-ggsave(
-  "../figures/singleR_pruned_umap.png",
-  singleR_pruned_umap,
-  width = 10,
-  height = 8,
-  dpi = 300
-)
-
-# Save Seurat object with SingleR labels
 saveRDS(
   combined,
-  "../data/combined_singler_annotated.rds"
+  "../data/combined_singler_multi_annotated.rds"
 )

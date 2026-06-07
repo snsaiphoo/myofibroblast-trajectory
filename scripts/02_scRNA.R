@@ -9,9 +9,12 @@ set.seed(123)
 combined <- readRDS("../data/combined_singlets_counts_only.rds")
 
 combined <- NormalizeData(combined)
-combined <- FindVariableFeatures(combined, selection.method = "vst", nfeatures = 3000)
+combined <- FindVariableFeatures(combined, selection.method = "vst", nfeatures = 2000)
 combined <- ScaleData(combined)
 combined <- RunPCA(combined, features = VariableFeatures(combined))
+
+DimPlot(combined, reduction = "pca")
+ElbowPlot(combined, ndims = 50)
 
 pcs_to_use <- 1:20
 
@@ -20,6 +23,7 @@ combined <- FindNeighbors(
   dims = pcs_to_use
 )
 
+# Leiden algorithm is better suited for similar cell types
 combined <- FindClusters(
   combined,
   resolution = seq(0.1, 0.8, 0.1),
@@ -144,3 +148,4 @@ DotPlot(
     "Comp"
   )
 ) + RotatedAxis()
+
