@@ -55,21 +55,21 @@ FeaturePlot(
 combined <- RenameIdents(
   combined,
   "1" = "Tendon-resident macrophages",
-  "2" = "Late-stage ECM-remodelling tenocytes",
+  "2" = "ECM-remodelling tenocytes",
   "3" = "FAP-like repair fibroblasts",
   "4" = "Homeostatic fibroblasts",
-  "5" = "Proliferating tenocytes",
+  "5" = "Proliferating stromal cells",
   "6" = "Fibrochondrocyte-like tenocytes",
-  "7" = "Activated signaling tenocytes",
+  "7" = "Signaling tenocytes",
   "8" = "Inflammatory myeloid cells",
   "9" = "Mature tenocytes",
   "10" = "Proinflammatory tenocytes",
   "11" = "Vascular endothelial cells",
-  "12" = "Early injury-activated tenocytes",
+  "12" = "Activated tenocytes",
   "13" = "Muscle-associated myogenic cells",
   "14" = "Dendritic cells",
-  "15" = "Pericytes / vascular smooth muscle cells",
-  "16" = "Nerve-associated cells",
+  "15" = "Mural cells",
+  "16" = "Stromal cells",
   "17" = "Neutrophils",
   "18" = "Mast cells"
 )
@@ -106,3 +106,40 @@ ggsave(
   height = 10,
   dpi = 300
 )
+
+FeaturePlot(
+  combined,
+  features = c("Acta2", "Tagln", "Myl9", "Tpm2", "Cnn1", "Col1a1", "Col1a2"),
+  ncol = 3
+)
+
+VlnPlot(
+  combined,
+  features = c("Acta2", "Tagln", "Myl9", "Tpm2", "Cnn1"),
+  group.by = "cell_type_manual",
+  pt.size = 0
+)
+
+celltype_markers <- c(
+  "C1qa",     # macrophages
+  "Dlk1",     # FAPs
+  "Procr",    # stromal fibroblasts
+  "Ccnb1",    # proliferating
+  "Acan",     # fibrochondrocytes
+  "Gdf10",    # activated tenocytes
+  "Fmod",     # mature tenocytes
+  "Cxcl5",    # inflammatory tenocytes
+  "Emcn",     # endothelial
+  "Flt3",     # dendritic
+  "Myh11",    # mural/pericytes
+  "A2m",      # stromal cells
+  "S100a8",   # neutrophils
+  "Tpsab1"    # mast cells
+)
+
+DotPlot(
+  combined,
+  features = celltype_markers,
+  group.by = "cell_type_manual"
+) +
+  RotatedAxis()
