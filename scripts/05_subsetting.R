@@ -163,9 +163,10 @@ write.csv(
 # umap by condition
 m_umap_condition <- DimPlot(
   mesenchymal,
-  group.by = "cell_type_manual",
+  group.by = "RNA_snn_res.0.4",
   split.by = "condition",
-  ncol = 2
+  ncol = 2,
+  label = TRUE
 )
 
 ggsave(
@@ -187,3 +188,154 @@ DimPlot(
   group.by = "RNA_snn_res.0.4",
   label = TRUE
 )
+
+DimPlot(
+  mesenchymal,
+  group.by = "RNA_snn_res.0.4",
+  split.by = "condition",
+  ncol = 2,
+  label = TRUE
+)
+
+# Checking for more associations
+FindMarkers(
+  mesenchymal,
+  ident.1 = "5",
+  ident.2 = "10"
+)
+
+DotPlot(
+  mesenchymal,
+  features = c(
+    "Saa3", "Ereg", "Hp", "Serpina3g", "Tnn", "Adamts14",
+    "Ccna2", "Plk1", "Kif11", "Kif2c", "Dlgap5", "Hmmr"
+  ),
+  group.by = "mesenchymal_cluster"
+) + RotatedAxis()
+
+
+FeaturePlot(
+  mesenchymal,
+  features = c(
+    "Lyz2",
+    "Tyrobp",
+    "Csf1r",
+    "Adgre1",
+    "Cd68",
+    "Fcgr3"
+  )
+)
+
+VlnPlot(
+  mesenchymal,
+  features = c(
+    "Lyz2",
+    "Tyrobp",
+    "Csf1r"
+  ),
+  group.by = "RNA_snn_res.0.4"
+)
+# Adding in final annotations 
+library(Seurat)
+library(dplyr)
+library(plyr)
+
+# Make sure identities are set to the chosen mesenchymal clustering
+Idents(mesenchymal) <- "RNA_snn_res.0.4"
+
+# Remove cluster 11
+mesenchymal_clean <- subset(
+  mesenchymal,
+  idents = "11",
+  invert = TRUE
+)
+
+# Reset identities after subsetting
+Idents(mesenchymal_clean) <- "RNA_snn_res.0.4"
+
+# Add refined labels
+mesenchymal_clean$cell_type_refined <- plyr::mapvalues(
+  x = as.character(Idents(mesenchymal_clean)),
+  from = c("1","2","3","4","5","6","7","8","9","10"),
+  to = c(
+    "Repair fibroblasts",
+    "ECM-remodelling tenocytes",
+    "Homeostatic fibroblasts",
+    "Fibrochondrocyte-like tenocytes",
+    "Repair tenocytes",
+    "Regulatory/signaling tenocytes",
+    "Mature tenocytes",
+    "Proinflammatory tenocytes",
+    "Activated tenocytes",
+    "Proliferating tenocytes"
+  )
+)
+
+# Check labels
+table(mesenchymal_clean$cell_type_refined)
+
+# Plot refined labels
+umap_refined <- DimPlot(
+  mesenchymal_clean,
+  reduction = "umap",
+  group.by = "cell_type_refined",
+  label = TRUE
+)
+
+umap_refined
+
+# Save figure
+ggsave(
+  "../figures/mesenchymal_umap_refined_labels.png",
+  umap_refined,
+  width = 10,
+  height = 7,
+  dpi = 300
+)
+
+# Save final refined object
+saveRDS(
+  mesenchymal_clean,
+  "../data/mesenchymal_refined_annotated.rds"
+)
+
+# Rename "Regulatory/signaling tenocytes" to "Signaling tenocytes"
+
+mesenchymal_clean$cell_type_refined <- as.character(mesenchymal_clean$cell_type_refined)
+
+mesenchymal_clean$cell_type_refined[
+  mesenchymal_clean$cell_type_refined == "Regulatory/signaling tenocytes"
+] <- "Signaling tenocytes"
+
+mesenchymal_clean$cell_type_refined <- factor(mesenchymal_clean$cell_type_refined)
+
+# Check
+levels(mesenchymal_clean$cell_type_refined)
+table(mesenchymal_clean$cell_type_refined)
+
+# Replot
+replot <- DimPlot(
+  mesenchymal_clean,
+  reduction = "umap",
+  group.by = "cell_type_refined",
+  label = TRUE
+)
+
+# Save figure
+ggsave(
+  "../figures/mesenchymal_umap_refined_labels.png",
+  replot,
+  width = 12,
+  height = 8,
+  dpi = 300
+)
+
+# Save updated object
+saveRDS(
+  mesenchymal_clean,
+  "../data/mesenchymal_refined_annotated.rds"
+)
+
+
+DimPlot(mesenchymal_clean, group.by = "condition")
+DimPlot(mesenchymal_clean, split.by = "condition", ncol = 2)
