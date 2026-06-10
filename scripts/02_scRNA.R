@@ -30,6 +30,14 @@ combined <- FindClusters(
   algorithm = 4
 )
 
+saveRDS(combined, "../data/checkpoint_03_clusters.rds")
+
+sapply(seq(0.1, 0.8, 0.1), function(res) {
+  length(unique(combined[[paste0("RNA_snn_res.", res)]][,1]))
+})
+
+saveRDS(combined, "../data/combined_processed_resolutions_REPRODUCED.rds")
+
 combined <- RunUMAP(
   combined,
   dims = pcs_to_use
@@ -92,6 +100,8 @@ umap_condition <- DimPlot(
 
 umap_full
 umap_condition
+
+saveRDS(combined, "../data/combined_processed_resolutions_REPRODUCED_umap.rds")
 
 ggsave("../figures/umap_full.png", umap_full, width = 8, height = 6, dpi = 300)
 ggsave("../figures/umap_condition.png", umap_condition, width = 8, height = 6, dpi = 300)

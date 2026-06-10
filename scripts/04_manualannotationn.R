@@ -3,7 +3,8 @@ library(dplyr)
 library(ggplot2)
 library(patchwork)
 
-combined <- readRDS("../data/combined_processed_resolutions.rds")
+set.seed(123)
+combined <- readRDS("../data/combined_processed_resolutions_REPRODUCED_umap.rds")
 markers <- readRDS("../data/markers_res0.5.rds")
 
 Idents(combined) <- "RNA_snn_res.0.5"
@@ -56,9 +57,9 @@ combined <- RenameIdents(
   combined,
   "1" = "Tendon-resident macrophages",
   "2" = "ECM-remodelling tenocytes",
-  "3" = "FAP-like repair fibroblasts",
+  "3" = "Repair fibroblasts",
   "4" = "Homeostatic fibroblasts",
-  "5" = "Proliferating stromal cells",
+  "5" = "Proliferating tenocytes",
   "6" = "Fibrochondrocyte-like tenocytes",
   "7" = "Signaling tenocytes",
   "8" = "Inflammatory myeloid cells",
@@ -74,9 +75,7 @@ combined <- RenameIdents(
   "18" = "Mast cells"
 )
 
-# Save annotations to metadata
 combined$cell_type_manual <- Idents(combined)
-
 # UMAP with legend only
 p_manual <- DimPlot(
   combined,
@@ -143,3 +142,21 @@ DotPlot(
   group.by = "cell_type_manual"
 ) +
   RotatedAxis()
+
+
+Idents(combined) <- "cell_type_manual"
+
+markers_10_vs_12 <- FindMarkers(
+  combined,
+  ident.1 = "Proinflammatory tenocytes",
+  ident.2 = "Activated tenocytes"
+)
+
+head(markers_10_vs_12)
+
+# cluster 10 and 12 should remain separated
+
+saveRDS(
+  combined,
+  "../data/combined_manual_annotated.rds"
+)
