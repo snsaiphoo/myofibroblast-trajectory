@@ -26,6 +26,7 @@ score_cols
 
 # save scored object
 saveRDS(mesenchymal, "../data/mesenchymal_gene_set_scored.rds")
+mesenchymal <- readRDS("../data/mesenchymal_gene_set_scored.rds")
 
 # compute group scores by averaging ucell scores within each biological group
 for (group_name in names(gene_set_groups)) {
@@ -213,10 +214,10 @@ for (cond in condition_order) {
   
   cond_mat <- as.matrix(cond_df)
   
-  cond_mat_scaled <- t(scale(t(cond_mat)))
+  #cond_mat_scaled <- t(scale(t(cond_mat)))
   
   pheatmap(
-    cond_mat_scaled,
+    cond_mat,
     cluster_rows = TRUE,
     cluster_cols = FALSE,
     fontsize_row = 9,
