@@ -3,34 +3,26 @@ library(msigdbr)
 library(dplyr)
 library(stringr)
 
-# Load mesenchymal object
+# load data
 mesenchymal <- readRDS("../data/mesenchymal_refined_annotated.rds")
 
-# Load mouse msigdbr gene sets
-msig_mouse <- msigdbr(db_species = "MM", species = "Mus musculus") 
+# load mouse msigdb gene sets
+msig_mouse <- msigdbr(db_species = "MM", species = "Mus musculus")
 
-# View available collections 
-unique(msig_mouse$gs_collection) 
-
-# Keep MH, M2, and M5
+# keep MH, M2, and M5 collections
 all_gs <- msig_mouse %>% filter(str_detect(gs_collection, "MH|M2|M5"))
 
-# Group the msigdbr gene sets
+# select gene sets
 selected_msigdb_sets <- c(
-  # Hallmark MH
   "HALLMARK_TGF_BETA_SIGNALING",
   "HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION",
   "HALLMARK_IL6_JAK_STAT3_SIGNALING",
   "HALLMARK_INFLAMMATORY_RESPONSE",
   "HALLMARK_TNFA_SIGNALING_VIA_NFKB",
-  
-  # Reactome MS:CP
   "REACTOME_TGF_BETA_RECEPTOR_SIGNALING_ACTIVATES_SMADS",
   "REACTOME_ECM_PROTEOGLYCANS",
   "REACTOME_INTEGRIN_CELL_SURFACE_INTERACTIONS",
   "REACTOME_INTEGRIN_SIGNALING",
-  
-  # GO Biological Process M5:GO:BP
   "GOBP_SMAD_PROTEIN_SIGNAL_TRANSDUCTION",
   "GOBP_COLLAGEN_FIBRIL_ORGANIZATION",
   "GOBP_EXTRACELLULAR_MATRIX_ASSEMBLY",
@@ -45,40 +37,74 @@ selected_msigdb_sets <- c(
   "GOBP_TENDON_FORMATION"
 )
 
-# find the listed gene sets in the database dataframe
+# extract gene sets
 msigdb_gene_sets <- all_gs %>%
   filter(gs_name %in% selected_msigdb_sets) %>%
   split(x = .$gene_symbol, f = .$gs_name)
 
+# check for missing sets
 missing_sets <- setdiff(selected_msigdb_sets, names(msigdb_gene_sets))
 missing_sets
 
-# Custom gene sets for YAP/TAZ, integrin/FAK, and myofibroblast
-yap_taz <- c("Ctgf", "Cyr61", "Ankrd1", "Amotl2", "Ccnd1", "Birc5", "Serpine1", "Lats2")
+# custom gene sets
+yap_taz <- c(
+  "Ctgf", "Cyr61", "Ankrd1", "Amotl2", "Birc5", "Lats2", "Mmp3"
+)
 
-integrin_fak <- c("Itga1", "Itga2", "Itga5", "Itgav", "Itgb1", "Ptk2", "Pxn", "Vcl", "Tln1", "Zyx")
+integrin_fak <- c(
+  "Itgb1", "Ilk", "Itga1", "Itga2", "Itga5", "Itgav",
+  "Ptk2", "Vcl", "Pxn", "Tln1", "Zyx", "Fblim1"
+)
 
-myofibroblast <- c("Acta2", "Tagln", "Cnn1", "Myl9", "Cald1", "Fn1", "Col1a1", "Col1a2", "Postn", "Tnc", "Thbs1", "Ctgf", "Serpine1", "Timp1", "S100a4")
+myofibroblast <- c(
+  "Acta2", "Col1a1", "Col1a2", "Col3a1",
+  "Tnc", "Postn", "Fmod", "Scx", "Fn1"
+)
 
 custom_gene_sets <- list(
-  YAP_TAZ_CURATED = yap_taz,
-  INTEGRIN_FAK_CURATED = integrin_fak,
+  YAP_TAZ_CURATED       = yap_taz,
+  INTEGRIN_FAK_CURATED  = integrin_fak,
   MYOFIBROBLAST_CURATED = myofibroblast
 )
 
-# combine both gene sets
-gene_sets <- c(
-  msigdb_gene_sets,
-  custom_gene_sets
+# universal fibroblast marker diagnostic
+VlnPlot(
+  mesenchymal,
+  features = c("Pi16", "Dpp4", "Col15a1", "Cd55", "Procr"),
+  group.by = "RNA_snn_res.0.4",
+  pt.size = 0
 )
 
-# Keep only genes present in the dataset
+ggsave(
+  "../figures/diagnostic_universal_fibroblast_markers.png",
+  last_plot(),
+  width = 14, height = 8, dpi = 300
+)
+
+# myofibroblast gene set expression diagnostic
+VlnPlot(
+  mesenchymal,
+  features = c("Scx", "Fmod", "Thbs4", "Postn", "Tagln"),
+  group.by = "RNA_snn_res.0.4",
+  pt.size = 0
+)
+
+ggsave(
+  "../figures/diagnostic_myofibroblast_geneset_check.png",
+  last_plot(),
+  width = 14, height = 8, dpi = 300
+)
+
+# combine msigdb and custom gene sets
+gene_sets <- c(msigdb_gene_sets, custom_gene_sets)
+
+# filter to genes present in dataset
 gene_sets_present <- lapply(
   gene_sets,
   function(x) intersect(unique(x), rownames(mesenchymal))
 )
 
-# Group gene sets into biology categories
+# group gene sets by biology
 gene_set_groups <- list(
   
   Mechanotransduction = c(
@@ -96,7 +122,7 @@ gene_set_groups <- list(
     "GOBP_SMAD_PROTEIN_SIGNAL_TRANSDUCTION"
   ),
   
-  ECM_Fibrosis = c(
+  ECM_Remodeling = c(
     "HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION",
     "REACTOME_ECM_PROTEOGLYCANS",
     "GOBP_COLLAGEN_FIBRIL_ORGANIZATION",
@@ -121,14 +147,13 @@ gene_set_groups <- list(
   )
 )
 
-# Keep only grouped sets that survived filtering
+# filter groups to sets present in dataset
 gene_set_groups_present <- lapply(
   gene_set_groups,
   function(x) intersect(x, names(gene_sets_present))
 )
 
-
-# Quality checks
+# quality checks
 gene_set_sizes <- sort(sapply(gene_sets_present, length))
 gene_set_sizes
 
@@ -145,14 +170,6 @@ ungrouped_sets <- setdiff(
 missing_grouped_sets
 ungrouped_sets
 
-
-saveRDS(
-  gene_sets_present,
-  "../data/mechanotransduction_gene_sets.rds"
-)
-
-saveRDS(
-  gene_set_groups_present,
-  "../data/mechanotransduction_gene_set_groups.rds"
-)
-
+# save
+saveRDS(gene_sets_present, "../data/mechanotransduction_gene_sets.rds")
+saveRDS(gene_set_groups_present, "../data/mechanotransduction_gene_set_groups.rds")
