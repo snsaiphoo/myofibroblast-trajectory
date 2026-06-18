@@ -181,4 +181,53 @@ ggsave(
   width = 14, height = 10, dpi = 300
 )
 
-# figure 4: heatmap per condition 
+# figure 4: heatmap per condition at each cell type
+library(dplyr)
+library(tibble)
+library(pheatmap)
+
+# Order conditions
+condition_order <- c("WT", "I1D", "I7D", "I30D")
+
+# Average program scores by condition AND cell type
+celltype_condition_scores <- mesenchymal@meta.data %>%
+  dplyr::group_by(condition, cell_type_refined) %>%
+  dplyr::summarise(
+    Mechanotransduction = mean(Mechanotransduction_Score, na.rm = TRUE),
+    TGFB_SMAD = mean(TGFB_SMAD_Score, na.rm = TRUE),
+    ECM_Remodeling = mean(ECM_Remodeling_Score, na.rm = TRUE),
+    Inflammation = mean(Inflammation_Score, na.rm = TRUE),
+    Repair_Tendon_State = mean(Repair_Tendon_State_Score, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  dplyr::mutate(condition = factor(condition, levels = condition_order)) %>%
+  dplyr::arrange(condition, cell_type_refined)
+
+# Make one heatmap per condition
+for (cond in condition_order) {
+  
+  cond_df <- celltype_condition_scores %>%
+    filter(condition == cond) %>%
+    select(-condition) %>%
+    column_to_rownames("cell_type_refined")
+  
+  cond_mat <- as.matrix(cond_df)
+  
+  cond_mat_scaled <- t(scale(t(cond_mat)))
+  
+  pheatmap(
+    cond_mat_scaled,
+    cluster_rows = TRUE,
+    cluster_cols = FALSE,
+    fontsize_row = 9,
+    fontsize_col = 11,
+    cellheight = 18,
+    cellwidth = 70,
+    angle_col = 45,
+    main = paste("Biological Program Activity -", cond),
+    border_color = NA,
+    filename = paste0("../figures/heatmap_programs_celltype_", cond, ".png"),
+    width = 8,
+    height = 7
+  )
+}
