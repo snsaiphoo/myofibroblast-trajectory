@@ -232,3 +232,113 @@ for (cond in condition_order) {
     height = 7
   )
 }
+
+# figure 5: negative control validation for Average UCell Score per Cell Type
+negative_control_set <- msig_mouse %>%
+  filter(gs_name == "HALLMARK_PANCREAS_BETA_CELLS") %>%
+  split(x = .$gene_symbol, f = .$gs_name)
+
+mesenchymal <- AddModuleScore_UCell(mesenchymal, features = negative_control_set)
+
+# average by cell type
+neg_ctrl_avg <- mesenchymal@meta.data %>%
+  group_by(cell_type_refined) %>%
+  dplyr::summarise(Pancreas_Beta_Cells = mean(HALLMARK_PANCREAS_BETA_CELLS_UCell, na.rm = TRUE),
+                   .groups = "drop") %>%
+  column_to_rownames("cell_type_refined")
+
+neg_ctrl_mat <- as.matrix(neg_ctrl_avg)
+neg_ctrl_mat <- neg_ctrl_mat[celltype_order, , drop = FALSE]
+
+pheatmap(
+  neg_ctrl_mat,
+  cluster_rows = FALSE,
+  cluster_cols = FALSE,
+  fontsize_row = 10,
+  fontsize_col = 10,
+  cellheight = 25,
+  cellwidth = 80,
+  angle_col = 45,
+  breaks = seq(0, 0.5, length.out = 101),
+  main = "Negative Control: Pancreas Beta Cell Gene Set UCell Scores by Cell Type",
+  border_color = NA,
+  filename = "../figures/heatmap_negative_control.png",
+  width = 6,
+  height = 6
+)
+
+# Figure 6: Individual Biological Programs 
+# get global ranges for standardized color scales
+global_min <- celltype_condition_scores %>%
+  select(Mechanotransduction, TGFB_SMAD, Inflammation, Repair_Tendon_State) %>%
+  unlist() %>% min(na.rm = TRUE)
+
+global_max <- celltype_condition_scores %>%
+  select(Mechanotransduction, TGFB_SMAD, Inflammation, Repair_Tendon_State) %>%
+  unlist() %>% max(na.rm = TRUE)
+
+ecm_min <- min(celltype_condition_scores$ECM_Remodeling, na.rm = TRUE)
+ecm_max <- max(celltype_condition_scores$ECM_Remodeling, na.rm = TRUE)
+
+# shared breaks
+breaks_main <- seq(global_min, global_max, length.out = 101)
+breaks_ecm  <- seq(ecm_min, ecm_max, length.out = 101)
+
+# set 1: four programs per timepoint
+for (cond in condition_order) {
+  
+  cond_df <- celltype_condition_scores %>%
+    filter(condition == cond) %>%
+    select(cell_type_refined, Mechanotransduction, TGFB_SMAD, Inflammation, Repair_Tendon_State) %>%
+    column_to_rownames("cell_type_refined")
+  
+  # enforce fixed row order, only rows present at that timepoint
+  row_order <- intersect(celltype_order, rownames(cond_df))
+  cond_mat <- as.matrix(cond_df[row_order, ])
+  
+  pheatmap(
+    cond_mat,
+    cluster_rows = FALSE,
+    cluster_cols = FALSE,
+    breaks = breaks_main,
+    fontsize_row = 9,
+    fontsize_col = 11,
+    cellheight = 18,
+    cellwidth = 70,
+    angle_col = 45,
+    main = paste("Biological Programs (excl. ECM) -", cond),
+    border_color = NA,
+    filename = paste0("../figures/heatmap_programs_main_", cond, ".png"),
+    width = 8,
+    height = 7
+  )
+}
+
+# set 2: ecm remodeling alone per timepoint
+for (cond in condition_order) {
+  
+  cond_df <- celltype_condition_scores %>%
+    filter(condition == cond) %>%
+    select(cell_type_refined, ECM_Remodeling) %>%
+    column_to_rownames("cell_type_refined")
+  
+  row_order <- intersect(celltype_order, rownames(cond_df))
+  cond_mat <- as.matrix(cond_df[row_order, , drop = FALSE])
+  
+  pheatmap(
+    cond_mat,
+    cluster_rows = FALSE,
+    cluster_cols = FALSE,
+    breaks = breaks_ecm,
+    fontsize_row = 9,
+    fontsize_col = 11,
+    cellheight = 18,
+    cellwidth = 70,
+    angle_col = 45,
+    main = paste("ECM Remodeling Program -", cond),
+    border_color = NA,
+    filename = paste0("../figures/heatmap_ecm_", cond, ".png"),
+    width = 6,
+    height = 7
+  )
+}

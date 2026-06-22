@@ -48,7 +48,7 @@ missing_sets
 
 # custom gene sets
 yap_taz <- c(
-  "Ctgf", "Cyr61", "Ankrd1", "Amotl2", "Birc5", "Lats2", "Mmp3"
+  "Ctgf", "Cyr61", "Ankrd1", "Amotl2", "Lats2", "Mmp3"
 )
 
 integrin_fak <- c(
@@ -57,42 +57,13 @@ integrin_fak <- c(
 )
 
 myofibroblast <- c(
-  "Acta2", "Col1a1", "Col1a2", "Col3a1",
-  "Tnc", "Postn", "Fmod", "Scx", "Fn1"
+  "Acta2", "Tnc", "Postn", "Fn1"
 )
 
 custom_gene_sets <- list(
   YAP_TAZ_CURATED       = yap_taz,
   INTEGRIN_FAK_CURATED  = integrin_fak,
   MYOFIBROBLAST_CURATED = myofibroblast
-)
-
-# universal fibroblast marker diagnostic
-VlnPlot(
-  mesenchymal,
-  features = c("Pi16", "Dpp4", "Col15a1", "Cd55", "Procr"),
-  group.by = "RNA_snn_res.0.4",
-  pt.size = 0
-)
-
-ggsave(
-  "../figures/diagnostic_universal_fibroblast_markers.png",
-  last_plot(),
-  width = 14, height = 8, dpi = 300
-)
-
-# myofibroblast gene set expression diagnostic
-VlnPlot(
-  mesenchymal,
-  features = c("Scx", "Fmod", "Thbs4", "Postn", "Tagln"),
-  group.by = "RNA_snn_res.0.4",
-  pt.size = 0
-)
-
-ggsave(
-  "../figures/diagnostic_myofibroblast_geneset_check.png",
-  last_plot(),
-  width = 14, height = 8, dpi = 300
 )
 
 # combine msigdb and custom gene sets
@@ -152,23 +123,6 @@ gene_set_groups_present <- lapply(
   gene_set_groups,
   function(x) intersect(x, names(gene_sets_present))
 )
-
-# quality checks
-gene_set_sizes <- sort(sapply(gene_sets_present, length))
-gene_set_sizes
-
-missing_grouped_sets <- setdiff(
-  unlist(gene_set_groups),
-  names(gene_sets_present)
-)
-
-ungrouped_sets <- setdiff(
-  names(gene_sets_present),
-  unlist(gene_set_groups)
-)
-
-missing_grouped_sets
-ungrouped_sets
 
 # save
 saveRDS(gene_sets_present, "../data/mechanotransduction_gene_sets.rds")
