@@ -92,6 +92,7 @@ ggsave(
 saveRDS(mesenchymal, "../data/mesenchymal_processed_res0.4.rds")
 
 # marker gene identification
+mesenchymal <- readRDS("../data/mesenchymal_processed_res0.4.rds")
 
 set.seed(123)
 
@@ -99,7 +100,7 @@ markers_mesenchymal <- FindAllMarkers(
   mesenchymal,
   only.pos = TRUE,
   min.pct = 0.25,
-  logfc.threshold = 0.25
+  logfc.threshold = 0.50
 )
 
 top15_markers <- markers_mesenchymal %>%
