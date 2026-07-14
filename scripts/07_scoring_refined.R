@@ -110,7 +110,7 @@ pheatmap(
   cellheight = 25,
   main = "Mechanotransduction and TGFβ/SMAD Signaling",
   border_color = NA,
-  filename = "../figures2/Figure1_Mechanotransduction_Heatmap.png",
+  filename = "../results/figures_refined/Figure1_Mechanotransduction_Heatmap.png",
   width = 10,
   height = 6
 )
@@ -131,7 +131,7 @@ pheatmap(
   cellheight = 25,
   main = "Fibroblast Activation Scores",
   border_color = NA,
-  filename = "../figures2/Figure2_FibroblastActivation_Heatmap.png",
+  filename = "../results/figures_refined/Figure2_FibroblastActivation_Heatmap.png",
   width = 8,
   height = 6
 )
@@ -152,7 +152,7 @@ pheatmap(
   cellheight = 25,
   main = "ECM Organization and Inflammation",
   border_color = NA,
-  filename = "../figures2/Figure3_ECM_Inflammation_Heatmap.png",
+  filename = "../results/figures_refined/Figure3_ECM_Inflammation_Heatmap.png",
   width = 9,
   height = 6
 )
@@ -239,7 +239,7 @@ for (cond in condition_order) {
     angle_col = 45,
     main = paste("Mechanotransduction and TGFβ/SMAD -", cond),
     border_color = NA,
-    filename = paste0("../figures2/Figure4a_Mech_TGFB_SMAD_", cond, ".png"),
+    filename = paste0("../results/figures_refined/Figure4a_Mech_TGFB_SMAD_", cond, ".png"),
     width = 10,
     height = 6
   )
@@ -257,7 +257,7 @@ for (cond in condition_order) {
     angle_col = 45,
     main = paste("Fibroblast Activation -", cond),
     border_color = NA,
-    filename = paste0("../figures2/Figure4b_Fibroblast_", cond, ".png"),
+    filename = paste0("../results/figures_refined/Figure4b_Fibroblast_", cond, ".png"),
     width = 10,
     height = 6
   )
@@ -275,7 +275,7 @@ for (cond in condition_order) {
     angle_col = 45,
     main = paste("ECM Organization and Inflammation -", cond),
     border_color = NA,
-    filename = paste0("../figures2/Figure4c_ECM_Inflammation_", cond, ".png"),
+    filename = paste0("../results/figures_refined/Figure4c_ECM_Inflammation_", cond, ".png"),
     width = 10,
     height = 6
   )
@@ -337,7 +337,7 @@ ggplot(
   )
 
 ggsave(
-  "../figures2/Figure5_Mechanotransduction_Dynamics_Lineplot.png",
+  "../results/figures_refined/Figure5_Mechanotransduction_Dynamics_Lineplot.png",
   last_plot(),
   width = 10,
   height = 6,

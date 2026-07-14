@@ -83,7 +83,7 @@ p_manual <- DimPlot(
 )
 
 ggsave(
-  filename = "../figures/manual_annotation_umap.png",
+  filename = "../results/figures_all/manual_annotation_umap.png",
   plot = p_manual,
   width = 10,
   height = 8,
@@ -99,7 +99,7 @@ p_manual_split <- DimPlot(
 )
 
 ggsave(
-  filename = "../figures/manual_annotation_umap_by_condition.png",
+  filename = "../results/figures_all/manual_annotation_umap_by_condition.png",
   plot = p_manual_split,
   width = 14,
   height = 10,

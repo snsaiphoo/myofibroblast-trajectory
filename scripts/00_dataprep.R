@@ -1,4 +1,4 @@
-source("functions/seuratprocess.R")
+source("../functions/seuratprocess.R")
 
 library(Seurat)
 library(dplyr)
@@ -12,10 +12,10 @@ library(DoubletFinder)
 # unzip("data/GSM8767959_I30D_matrix.zip", exdir = "data/")
 # 
 # # Read in the data 
-wt_counts <- Read10X(data.dir = "data/WT_matrix/")
-i1d_counts <- Read10X(data.dir = "data/I1D_matrix")
-i7d_counts <- Read10X(data.dir = "data/I7D_matrix")
-i30d_counts <- Read10X(data.dir = "data/I30D_matrix")
+wt_counts <- Read10X(data.dir = "../data/WT_matrix/")
+i1d_counts <- Read10X(data.dir = "../data/I1D_matrix")
+i7d_counts <- Read10X(data.dir = "../data/I7D_matrix")
+i30d_counts <- Read10X(data.dir = "../data/I30D_matrix")
 
 # # Convert into Seurat objects
 wt <- CreateSeuratObject(counts = wt_counts, min.cells = 3, min.features = 200, project = "WT")
@@ -31,15 +31,15 @@ i1d$condition <- "I1D"
 i7d$condition <- "I7D"
 i30d$condition <- "I30D"
 
-saveRDS(wt, file = "data/wt.rds")
-saveRDS(i1d, file = "data/i1d.rds")
-saveRDS(i7d, file = "data/i7d.rds")
-saveRDS(i30d, file = "data/i30d.rds")
+saveRDS(wt, file = "../data/wt.rds")
+saveRDS(i1d, file = "../data/i1d.rds")
+saveRDS(i7d, file = "../data/i7d.rds")
+saveRDS(i30d, file = "../data/i30d.rds")
 
-wt <- readRDS("data/wt.rds")
-i1d <- readRDS("data/i1d.rds")
-i7d <- readRDS("data/i7d.rds")
-i30d <- readRDS("data/i30d.rds")
+wt <- readRDS("../data/wt.rds")
+i1d <- readRDS("../data/i1d.rds")
+i7d <- readRDS("../data/i7d.rds")
+i30d <- readRDS("../data/i30d.rds")
 
 # Preprocessing for WT 
 wt <- plot_qc(wt)
@@ -67,7 +67,7 @@ cat("Before doublet removal:", ncol(wt), "cells\n")
 cat("After doublet removal:", ncol(wt_clean), "cells\n")
 cat("Removed:", ncol(wt) - ncol(wt_clean), "doublets\n")
 
-saveRDS(wt_clean, "data/wt_singlets.rds")
+saveRDS(wt_clean, "../data/wt_singlets.rds")
 
 # Preprocessing for I1D
 i1d <- plot_qc(i1d)
@@ -95,7 +95,7 @@ cat("Before doublet removal:", ncol(i1d), "cells\n")
 cat("After doublet removal:", ncol(i1d_clean), "cells\n")
 cat("Removed:", ncol(i1d) - ncol(i1d_clean), "doublets\n")
 
-saveRDS(i1d_clean, "data/i1d_singlets.rds")
+saveRDS(i1d_clean, "../data/i1d_singlets.rds")
 
 # Preprocessing for I7D
 i7d <- plot_qc(i7d)
@@ -123,7 +123,7 @@ cat("Before doublet removal:", ncol(i7d), "cells\n")
 cat("After doublet removal:", ncol(i7d_clean), "cells\n")
 cat("Removed:", ncol(i7d) - ncol(i7d_clean), "doublets\n")
 
-saveRDS(i7d_clean, "data/i7d_singlets.rds")
+saveRDS(i7d_clean, "../data/i7d_singlets.rds")
 
 # Preprocessing for I30D
 i30d <- plot_qc(i30d)
@@ -151,5 +151,5 @@ cat("Before doublet removal:", ncol(i30d), "cells\n")
 cat("After doublet removal:", ncol(i30d_clean), "cells\n")
 cat("Removed:", ncol(i30d) - ncol(i30d_clean), "doublets\n")
 
-saveRDS(i30d_clean, "data/i30d_singlets.rds")
+saveRDS(i30d_clean, "../data/i30d_singlets.rds")
 

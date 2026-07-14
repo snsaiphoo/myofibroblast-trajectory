@@ -60,7 +60,7 @@ combined_umap <- wrap_plots(umap_list, ncol = 3)
 combined_umap
 
 ggsave(
-  "../figures/umap_resolutions.png",
+  "../results/figures_all/umap_resolutions.png",
   combined_umap,
   width = 18,
   height = 12,
@@ -76,7 +76,7 @@ clust <- clustree(
 clust
 
 ggsave(
-  "../figures/cluster_tree.png",
+  "../results/figures_all/cluster_tree.png",
   clust,
   width = 18,
   height = 12,
@@ -103,8 +103,8 @@ umap_condition
 
 saveRDS(combined, "../data/combined_processed_resolutions_REPRODUCED_umap.rds")
 
-ggsave("../figures/umap_full.png", umap_full, width = 8, height = 6, dpi = 300)
-ggsave("../figures/umap_condition.png", umap_condition, width = 8, height = 6, dpi = 300)
+ggsave("../results/figures_all/umap_full.png", umap_full, width = 8, height = 6, dpi = 300)
+ggsave("../results/figures_all/umap_condition.png", umap_condition, width = 8, height = 6, dpi = 300)
 
 saveRDS(combined, "../data/combined_processed_resolutions.rds")
 
@@ -135,8 +135,8 @@ top_markers <- markers %>%
 
 View(top_markers)
 
-write.csv(markers, "../figures/cluster_markers_res0.5.csv", row.names = FALSE)
-write.csv(top_markers, "../figures/top10_markers_res0.5.csv", row.names = FALSE)
+write.csv(markers, "../results/figures_all/cluster_markers_res0.5.csv", row.names = FALSE)
+write.csv(top_markers, "../results/figures_all/top10_markers_res0.5.csv", row.names = FALSE)
 
 # Tenocyte/Fibroblast
 FeaturePlot(

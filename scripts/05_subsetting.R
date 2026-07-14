@@ -63,7 +63,7 @@ umap_list <- lapply(seq(0.1, 0.8, 0.1), function(res) {
 wrap_plots(umap_list, ncol = 3)
 
 ggsave(
-  "../figures/mesenchymal_umap_resolutions.png",
+  "../results/figures_all/mesenchymal_umap_resolutions.png",
   last_plot(),
   width = 18, height = 12, dpi = 300
 )
@@ -72,7 +72,7 @@ ggsave(
 clustree(mesenchymal, prefix = "RNA_snn_res.")
 
 ggsave(
-  "../figures/mesenchymal_cluster_tree.png",
+  "../results/figures_all/mesenchymal_cluster_tree.png",
   last_plot(),
   width = 18, height = 12, dpi = 300
 )
@@ -84,7 +84,7 @@ mesenchymal$mesenchymal_cluster <- Idents(mesenchymal)
 DimPlot(mesenchymal, reduction = "umap", group.by = "mesenchymal_cluster", label = TRUE)
 
 ggsave(
-  "../figures/mesenchymal_umap_res0.4.png",
+  "../results/figures_all/mesenchymal_umap_res0.4.png",
   last_plot(),
   width = 8, height = 6, dpi = 300
 )
@@ -170,7 +170,7 @@ DimPlot(
 )
 
 ggsave(
-  "../figures/mesenchymal_umap_refined_labels.png",
+  "../results/figures_all/mesenchymal_umap_refined_labels.png",
   last_plot(),
   width = 12, height = 8, dpi = 300
 )
@@ -185,7 +185,7 @@ DimPlot(
 )
 
 ggsave(
-  "../figures/mesenchymal_umap_refined_by_condition.png",
+  "../results/figures_all/mesenchymal_umap_refined_by_condition.png",
   last_plot(),
   width = 16, height = 8, dpi = 300
 )
@@ -209,7 +209,7 @@ DotPlot(
 ) + RotatedAxis()
 
 ggsave(
-  "../figures/mesenchymal_annotation_validation_dotplot.png",
+  "../results/figures_all/mesenchymal_annotation_validation_dotplot.png",
   last_plot(),
   width = 18, height = 8, dpi = 300
 )

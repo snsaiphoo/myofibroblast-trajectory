@@ -71,7 +71,7 @@ write.csv(
 )
 
 ggsave(
-  "../figures/singleR_labels_umap.png",
+  "../results/figures_all/singleR_labels_umap.png",
   singleR_umap,
   width = 10,
   height = 8,
@@ -79,7 +79,7 @@ ggsave(
 )
 
 ggsave(
-  "../figures/singleR_pruned_umap.png",
+  "../results/figures_all/singleR_pruned_umap.png",
   singleR_pruned_umap,
   width = 10,
   height = 8,

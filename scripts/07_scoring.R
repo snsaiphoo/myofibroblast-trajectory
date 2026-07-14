@@ -84,7 +84,7 @@ pheatmap(
   angle_col = 90,
   main = "Average UCell Scores by Cell Type",
   border_color = NA,
-  filename = "../figures/heatmap_ucell_by_celltype.png",
+  filename = "../results/figures_all/heatmap_ucell_by_celltype.png",
   width = 12,
   height = 6
 )
@@ -120,7 +120,7 @@ pheatmap(
   angle_col = 45,
   main = "Biological Program Activity by Condition",
   border_color = NA,
-  filename = "../figures/heatmap_programs_by_condition.png",
+  filename = "../results/figures_all/heatmap_programs_by_condition.png",
   width = 8,
   height = 5
 )
@@ -177,7 +177,7 @@ ggplot(
   )
 
 ggsave(
-  "../figures/lineplot_program_dynamics.png",
+  "../results/figures_all/lineplot_program_dynamics.png",
   last_plot(),
   width = 14, height = 10, dpi = 300
 )
@@ -227,7 +227,7 @@ for (cond in condition_order) {
     angle_col = 45,
     main = paste("Biological Program Activity -", cond),
     border_color = NA,
-    filename = paste0("../figures/heatmap_programs_celltype_", cond, ".png"),
+    filename = paste0("../results/figures_all/heatmap_programs_celltype_", cond, ".png"),
     width = 8,
     height = 7
   )
@@ -262,7 +262,7 @@ pheatmap(
   breaks = seq(0, 0.5, length.out = 101),
   main = "Negative Control: Pancreas Beta Cell Gene Set UCell Scores by Cell Type",
   border_color = NA,
-  filename = "../figures/heatmap_negative_control.png",
+  filename = "../results/figures_all/heatmap_negative_control.png",
   width = 6,
   height = 6
 )
@@ -308,7 +308,7 @@ for (cond in condition_order) {
     angle_col = 45,
     main = paste("Biological Programs (excl. ECM) -", cond),
     border_color = NA,
-    filename = paste0("../figures/heatmap_programs_main_", cond, ".png"),
+    filename = paste0("../results/figures_all/heatmap_programs_main_", cond, ".png"),
     width = 8,
     height = 7
   )
@@ -337,7 +337,7 @@ for (cond in condition_order) {
     angle_col = 45,
     main = paste("ECM Remodeling Program -", cond),
     border_color = NA,
-    filename = paste0("../figures/heatmap_ecm_", cond, ".png"),
+    filename = paste0("../results/figures_all/heatmap_ecm_", cond, ".png"),
     width = 6,
     height = 7
   )
