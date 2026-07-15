@@ -72,7 +72,7 @@ human <- RunUMAP(
 DimPlot(
   human,
   reduction = "umap",
-  group.by = "condition"
+  group.by = "disease"
 )
 
 # subset the fibroblasts
@@ -100,3 +100,37 @@ prop.table(
   ),
   margin = 2
 )
+
+library(dplyr)
+library(ggplot2)
+
+# Fibroblast metadata
+fib_meta <- human@meta.data %>%
+  filter(author_cell_type %in% c(
+    "ABCA10hi fibroblasts",
+    "ADAM12hi fibroblasts",
+    "FBLN1hi fibroblasts",
+    "NR4A1hi fibroblasts"
+  ))
+
+# Count cells
+fib_counts <- fib_meta %>%
+  count(condition, author_cell_type) %>%
+  group_by(condition) %>%
+  mutate(percent = n / sum(n) * 100)
+
+fib_counts
+
+ggplot(fib_counts,
+       aes(x = condition,
+           y = percent,
+           fill = author_cell_type)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  labs(
+    x = "",
+    y = "Fibroblast composition (%)",
+    fill = "Fibroblast subtype"
+  ) +
+  theme_classic(base_size = 14) +
+  scale_fill_brewer(palette = "Set2")
+
