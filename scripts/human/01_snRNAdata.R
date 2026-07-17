@@ -49,6 +49,7 @@ VlnPlot(
   pt.size = 0
 )
 
+set.seed(123)
 # preprocess the data
 human <- NormalizeData(human)
 
@@ -69,6 +70,8 @@ human <- RunUMAP(
   dims = 1:20
 )
 
+saveRDS(human,"../../data/human_rupture_processed.rds")
+
 DimPlot(
   human,
   reduction = "umap",
@@ -85,6 +88,8 @@ fib <- subset(
     "NR4A1hi fibroblasts"
   )
 )
+
+saveRDS(fib,"../../data/human_fib_sub.rds")
 
 DimPlot(
   fib,
