@@ -3,9 +3,6 @@ library(Seurat)
 library(dplyr)
 library(tibble)
 library(pheatmap)
-library(forcats)
-library(tidyr)
-library(ggplot2)
 
 mesenchymal <- readRDS("../../data/mesenchymal_geneset_scored_refined.rds")
 m_gene_sets <- readRDS("../../data/all_gene_sets_refined.rds")
@@ -50,143 +47,64 @@ human_matrix <-
 mouse_scaled <- scale(mouse_matrix)
 human_scaled <- scale(human_matrix)
 
-# Figure 1: 
-# Figure per pathway
+# Figure 1: Cross-species correlation heatmap
 
-# Mouse averages
-mouse_avg <- mesenchymal@meta.data %>%
-  group_by(cell_type_refined) %>%
-  summarise(across(all_of(score_order), ~mean(.x, na.rm = TRUE)), .groups = "drop") %>%
-  pivot_longer(-cell_type_refined, names_to = "Pathway", values_to = "UCell") %>%
-  mutate(Species = "Mouse",
-         CellType = cell_type_refined) %>%
-  select(Species, CellType, Pathway, UCell)
+cross_species_cor <- cor(
+  t(mouse_scaled),
+  t(human_scaled),
+  method = "pearson"
+)
 
-# Human averages
-human_avg <- fib@meta.data %>%
-  group_by(author_cell_type) %>%
-  summarise(across(all_of(score_order), ~mean(.x, na.rm = TRUE)), .groups = "drop") %>%
-  pivot_longer(-author_cell_type, names_to = "Pathway", values_to = "UCell") %>%
-  mutate(Species = "Human",
-         CellType = author_cell_type) %>%
-  select(Species, CellType, Pathway, UCell)
+pheatmap(
+  cross_species_cor,
+  color = colorRampPalette(c("navy", "white", "firebrick3"))(100),
+  cluster_rows = TRUE,
+  cluster_cols = TRUE,
+  display_numbers = TRUE,
+  number_format = "%.2f",
+  border_color = "grey90",
+  fontsize = 11,
+  fontsize_number = 10,
+  main = "Cross-species correlation of mechanotransduction signatures",
+  filename = "../../results/07_snRNA/Figure1_CrossSpecies_CH.png",
+  width = 9,
+  height = 6
+)
 
-combined <- bind_rows(mouse_avg, human_avg)
 
-mouse_levels <- c(
-  "Activated tenocytes",
-  "ECM-remodelling tenocytes",
-  "Fibrochondrocyte-like tenocytes",
-  "Mature tenocytes",
+# meesenchymal and fibroblasts 
+mouse_repair <- mouse_matrix[c(
   "Repair fibroblasts",
   "Repair-activated stromal cells",
-  "Proliferating mesenchymal cells",
   "Stromal progenitor-like cells",
   "Signaling stromal cells",
-  "Proinflammatory mesenchymal cells"
+  "Proinflammatory mesenchymal cells",
+  "Proliferating mesenchymal cells"
+), ]
+
+mouse_repair_scaled <- scale(mouse_repair)
+human_scaled <- scale(human_matrix)
+
+cross_species_cor <- cor(
+  t(mouse_repair_scaled),
+  t(human_scaled),
+  method = "pearson"
 )
 
-human_levels <- c(
-  "ABCA10hi fibroblasts",
-  "ADAM12hi fibroblasts",
-  "FBLN1hi fibroblasts",
-  "NR4A1hi fibroblasts"
+pheatmap(
+  cross_species_cor,
+  color = colorRampPalette(c("navy", "white", "firebrick3"))(100),
+  cluster_rows = TRUE,
+  cluster_cols = TRUE,
+  display_numbers = TRUE,
+  number_format = "%.2f",
+  border_color = "grey90",
+  fontsize = 11,
+  fontsize_number = 10,
+  main = "Cross-species correlation of mechanotransduction signatures",
+  filename = "../../results/07_snRNA/Figure1_CrossSpecies_CHR.png",
+  width = 9,
+  height = 6
 )
 
-combined <- combined %>%
-  mutate(
-    Display = case_when(
-      Species == "Mouse" ~ paste0("1_", CellType),
-      TRUE ~ paste0("2_", CellType)
-    )
-  )
 
-display_levels <- c(
-  paste0("1_", mouse_levels),
-  paste0("2_", human_levels)
-)
-
-combined$Display <- factor(combined$Display,
-                           levels = rev(display_levels))
-
-pathway_names <- c(
-  Integrin_FAK_UCell = "Integrin–FAK",
-  RhoA_ROCK_UCell = "RhoA–ROCK",
-  YAP_TEAD_UCell = "YAP/TEAD",
-  HALLMARK_TGF_BETA_SIGNALING_UCell = "TGF-β",
-  REACTOME_TGF_BETA_RECEPTOR_SIGNALING_ACTIVATES_SMADS_UCell = "SMAD",
-  GOBP_FIBROBLAST_ACTIVATION_UCell = "Fibroblast Activation",
-  Myofibroblast_UCell = "Myofibroblast",
-  HALLMARK_INFLAMMATORY_RESPONSE_UCell = "Inflammatory Response"
-)
-
-dir.create("../../results/07_snRNA/CrossSpecies_PathwayHeatmaps",
-           recursive = TRUE,
-           showWarnings = FALSE)
-
-for(path in score_order){
-  
-  df <- combined %>% filter(Pathway == path)
-  lims <- range(df$UCell, na.rm = TRUE)
-  
-  p <- ggplot(df,
-              aes(x = Species,
-                  y = Display,
-                  fill = UCell)) +
-    
-    geom_tile(width = 0.9,
-              height = 0.9,
-              colour = "white",
-              linewidth = 0.5) +
-    
-    scale_fill_viridis_c(
-      option = "plasma",
-      limits = lims,
-      name = "Mean\nUCell"
-    ) +
-    
-    scale_y_discrete(
-      labels = function(x) sub("^[12]_", "", x)
-    ) +
-    
-    labs(
-      title = pathway_names[path],
-      x = NULL,
-      y = NULL
-    ) +
-    
-    theme_minimal(base_size = 14) +
-    
-    theme(
-      panel.grid = element_blank(),
-      axis.text.x = element_text(face = "bold", size = 13),
-      axis.text.y = element_text(size = 10),
-      axis.ticks = element_blank(),
-      plot.title = element_text(face = "bold",
-                                hjust = 0.5,
-                                size = 18),
-      legend.position = "right"
-    ) +
-    
-    annotate(
-      "segment",
-      x = 0.5,
-      xend = 2.5,
-      y = 4.5,
-      yend = 4.5,
-      linewidth = 0.8
-    )
-  
-  print(p)
-  
-  ggsave(
-    filename = file.path(
-      "../../results/07_snRNA/CrossSpecies_PathwayHeatmaps",
-      paste0(gsub("[/ ]", "_", pathway_names[path]), ".png")
-    ),
-    plot = p,
-    width = 5.5,
-    height = 8,
-    dpi = 300
-  )
-}

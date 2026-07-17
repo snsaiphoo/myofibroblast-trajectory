@@ -1,0 +1,3 @@
+"Pathway",".y.","group1","group2","n1","n2","statistic","p","p.adj","p.adj.signif"
+"Fibroblast Activation","Score","Healthy","Rupture",3377,2273,3376892.5,1.39784054206974e-14,1.39784054206974e-14,"****"
+"Myofibroblast","Score","Healthy","Rupture",3377,2273,677768,0,0,"****"
