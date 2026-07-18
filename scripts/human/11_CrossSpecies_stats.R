@@ -2,9 +2,29 @@ library(ComplexHeatmap)
 library(circlize)
 library(RColorBrewer)
 
+############################################################
+# Load comparison matrix
+############################################################
+
 comparison <- readRDS(
   "../../data/CrossSpecies_PathwayMatrix.rds"
 )
+
+############################################################
+# Keep only mechanotransduction pathways
+############################################################
+
+comparison <- comparison[c(
+  "Integrin-FAK",
+  "RhoA-ROCK",
+  "YAP/TEAD",
+  "TGFβ",
+  "SMAD"
+), , drop = FALSE]
+
+############################################################
+# Rename columns
+############################################################
 
 colnames(comparison) <- c(
   "Activated\nStromal",
@@ -15,11 +35,19 @@ colnames(comparison) <- c(
   "ABCA10hi"
 )
 
+############################################################
+# Row-wise Z-score normalization
+############################################################
+
 comparison_scaled <- t(
   scale(
     t(as.matrix(comparison))
   )
 )
+
+############################################################
+# Column annotations
+############################################################
 
 species <- c(
   "Mouse",
@@ -58,6 +86,9 @@ ha <- HeatmapAnnotation(
   )
 )
 
+############################################################
+# Heatmap
+############################################################
 
 ht <- Heatmap(
   comparison_scaled,
@@ -94,9 +125,12 @@ ht <- Heatmap(
   )
 )
 
+############################################################
+# Save
+############################################################
 
 png(
-  "../../results/07_snRNA/Figure6_CrossSpeciesHeatmap.png",
+  "../../results/07_snRNA/Figure6_MechanotransductionOnly.png",
   width = 2500,
   height = 1800,
   res = 300
@@ -110,11 +144,33 @@ draw(
 
 dev.off()
 
-####
+########
+
+library(pheatmap)
+
+############################################################
+# Load comparison matrix
+############################################################
 
 comparison <- readRDS(
   "../../data/CrossSpecies_PathwayMatrix.rds"
 )
+
+############################################################
+# Keep only mechanotransduction pathways
+############################################################
+
+comparison <- comparison[c(
+  "Integrin-FAK",
+  "RhoA-ROCK",
+  "YAP/TEAD",
+  "TGFβ",
+  "SMAD"
+), , drop = FALSE]
+
+############################################################
+# Rename columns
+############################################################
 
 colnames(comparison) <- c(
   "Repair",
@@ -127,10 +183,11 @@ colnames(comparison) <- c(
 
 mat <- as.matrix(comparison)
 
-library(pheatmap)
+############################################################
+# Column annotations
+############################################################
 
 annotation <- data.frame(
-  
   Species = c(
     "Mouse",
     "Mouse",
@@ -139,20 +196,17 @@ annotation <- data.frame(
     "Human",
     "Human"
   ),
-  
   Population = c(
     "Repair",
     "Repair",
     "Repair",
-    "Intermediate",
+    "Homeostatic",
     "Homeostatic",
     "Homeostatic"
   )
-  
 )
 
 rownames(annotation) <- colnames(mat)
-
 
 ann_colors <- list(
   Species = c(
@@ -161,13 +215,16 @@ ann_colors <- list(
   ),
   Population = c(
     Repair = "#C0392B",
-    Intermediate = "#E67E22",
     Homeostatic = "#27AE60"
   )
 )
 
+############################################################
+# Save heatmap
+############################################################
+
 png(
-  "../../results/07_snRNA/FigureS1_UnscaledHeatmap.png",
+  "../../results/07_snRNA/FigureS1_MechanotransductionOnly_Unscaled.png",
   width = 3200,
   height = 1800,
   res = 300
@@ -175,7 +232,6 @@ png(
 
 pheatmap(
   mat,
-  name = "Average\nUCell score",
   cluster_rows = FALSE,
   cluster_cols = FALSE,
   annotation_col = annotation,
@@ -195,6 +251,3 @@ pheatmap(
 )
 
 dev.off()
-
-
-

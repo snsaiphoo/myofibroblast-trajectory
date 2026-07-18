@@ -1,0 +1,9 @@
+"Mouse","Human","Spearman_r","P_value"
+"Repair Fibroblasts","ADAM12hi",0.88,0.00385
+"Activated Stromal","ADAM12hi",0.9,0.00201
+"Repair Fibroblasts","NR4A1hi",0.83,0.0102
+"Activated Stromal","NR4A1hi",0.86,0.00653
+"Repair Fibroblasts","ABCA10hi",0.86,0.00653
+"Activated Stromal","ABCA10hi",0.9,0.00201
+"Repair Fibroblasts","FBLN1hi",0.81,0.0149
+"Activated Stromal","FBLN1hi",0.76,0.028
