@@ -6,6 +6,15 @@ comparison <- readRDS(
   "../../data/CrossSpecies_PathwayMatrix.rds"
 )
 
+comparison <- comparison[, c(
+  "Mouse_Repair_Activated_Stromal",
+  "Mouse_Repair_Fibroblasts",
+  "ADAM12hi fibroblasts",
+  "FBLN1hi fibroblasts",
+  "NR4A1hi fibroblasts",
+  "ABCA10hi fibroblasts"
+)]
+
 colnames(comparison) <- c(
   "Activated\nStromal",
   "Repair",
@@ -112,18 +121,18 @@ dev.off()
 
 ####
 
-comparison <- readRDS(
-  "../../data/CrossSpecies_PathwayMatrix.rds"
-)
+# comparison <- readRDS(
+#   "../../data/CrossSpecies_PathwayMatrix.rds"
+# )
 
-colnames(comparison) <- c(
-  "Repair",
-  "Activated Stromal",
-  "ADAM12hi",
-  "NR4A1hi",
-  "ABCA10hi",
-  "FBLN1hi"
-)
+# colnames(comparison) <- c(
+#   "Repair",
+#   "Activated Stromal",
+#   "ADAM12hi",
+#   "NR4A1hi",
+#   "ABCA10hi",
+#   "FBLN1hi"
+# )
 
 mat <- as.matrix(comparison)
 
@@ -144,7 +153,7 @@ annotation <- data.frame(
     "Repair",
     "Repair",
     "Repair",
-    "Intermediate",
+    "Homeostatic",
     "Homeostatic",
     "Homeostatic"
   )

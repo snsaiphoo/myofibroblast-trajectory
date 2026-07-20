@@ -26,6 +26,15 @@ comparison <- comparison[c(
 # Rename columns
 ############################################################
 
+comparison <- comparison[, c(
+  "Mouse_Repair_Activated_Stromal",
+  "Mouse_Repair_Fibroblasts",
+  "ADAM12hi fibroblasts",
+  "FBLN1hi fibroblasts",
+  "NR4A1hi fibroblasts",
+  "ABCA10hi fibroblasts"
+)]
+
 colnames(comparison) <- c(
   "Activated\nStromal",
   "Repair",
