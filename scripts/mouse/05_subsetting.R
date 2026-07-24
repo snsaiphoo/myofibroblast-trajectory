@@ -6,7 +6,7 @@ library(ggplot2)
 library(clustree)
 
 data_dir <- "../../data"
-fig_dir <- "../results/01_figures_all"
+fig_dir <- "../../results/01_figures_all"
 
 # Subsetting the mesenchymal populations
 combined <- readRDS(file.path(data_dir, "combined_manual_annotated.rds"))
@@ -182,13 +182,13 @@ DimPlot(
   mesenchymal_clean,
   reduction = "umap",
   group.by = "cell_type_refined",
-  label = TRUE,
+  label = FALSE,
 )
 
 ggsave(
   file.path(fig_dir, "mesenchymal_umap_refined_labels.png"),
   last_plot(),
-  width = 12, height = 8, dpi = 300
+  width = 6, height = 5, units = "in", dpi = 600
 )
 
 # UMAP split by condition
@@ -203,7 +203,7 @@ DimPlot(
 ggsave(
   file.path(fig_dir, "mesenchymal_umap_refined_by_condition.png"),
   last_plot(),
-  width = 16, height = 8, dpi = 300
+  width = 6, height = 5, units = "in", dpi = 600
 )
 
 # Annotation validation DotPlot

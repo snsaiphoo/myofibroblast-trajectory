@@ -75,20 +75,19 @@ ht <- Heatmap(
   cluster_rows = FALSE,
   cluster_columns = TRUE,
   column_names_gp = gpar(
-    fontsize = 12,
+    fontsize = 10,
     fontface = "bold"
   ),
   row_names_gp = gpar(
-    fontsize = 12,
+    fontsize = 10,
     fontface = "bold"
   ),
   row_names_side = "left",
-  column_title =
-    "Cross-species conservation of mechanotransduction pathways",
-  column_title_gp = gpar(
-    fontsize = 16,
-    fontface = "bold"
-  ),
+  #column_title = "Cross-species conservation of mechanotransduction pathways",
+  # column_title_gp = gpar(
+  #   fontsize = 16,
+  #   fontface = "bold"
+  # ),
   heatmap_legend_param = list(
     title_gp = gpar(fontsize = 12, fontface = "bold"),
     labels_gp = gpar(fontsize = 10)
@@ -105,10 +104,10 @@ ht <- Heatmap(
 
 
 png(
-  "../../results/07_snRNA/Figure6_CrossSpeciesHeatmap.png",
-  width = 2500,
-  height = 1800,
-  res = 300
+  "../../results/07_snRNA/Figure6_CrossSpeciesHeatmap2.png",
+  width = 3900,
+  height = 2700,
+  res = 600
 )
 
 draw(

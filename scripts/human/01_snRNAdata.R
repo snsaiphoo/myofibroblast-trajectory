@@ -72,6 +72,8 @@ human <- RunUMAP(
 
 saveRDS(human,"../../data/human_rupture_processed.rds")
 
+human <- readRDS("../../data/human_rupture_processed.rds")
+
 DimPlot(
   human,
   reduction = "umap",
@@ -126,7 +128,7 @@ fib_counts <- fib_meta %>%
 
 fib_counts
 
-ggplot(fib_counts,
+p <- ggplot(fib_counts,
        aes(x = condition,
            y = percent,
            fill = author_cell_type)) +
@@ -139,3 +141,28 @@ ggplot(fib_counts,
   theme_classic(base_size = 14) +
   scale_fill_brewer(palette = "Set2")
 
+ggsave(
+  filename = "../../results/07_snRNA/Human_Fibroblast_Composition.png",
+  plot = p,
+  width = 5.5,
+  height = 4.5,
+  units = "in",
+  dpi = 600,
+)
+
+p <- p +
+  theme(
+    legend.title = element_text(size = 12, face = "bold"),
+    legend.text = element_text(size = 10),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12)
+  )
+
+ggsave(
+  filename = "../../results/07_snRNA/Human_Fibroblast_Composition.png",
+  plot = p,
+  width = 5.5,
+  height = 4.5,
+  units = "in",
+  dpi = 600,
+)
