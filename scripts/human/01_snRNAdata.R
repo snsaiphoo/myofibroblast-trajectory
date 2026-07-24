@@ -154,8 +154,8 @@ p <- p +
   theme(
     legend.title = element_text(size = 12, face = "bold"),
     legend.text = element_text(size = 10),
-    axis.title = element_text(size = 14),
-    axis.text = element_text(size = 12)
+    axis.title = element_text(size = 11, face = "bold"),
+    axis.text = element_text(size = 11, face = "bold")
   )
 
 ggsave(
