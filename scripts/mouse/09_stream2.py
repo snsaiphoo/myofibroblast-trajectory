@@ -1,4 +1,4 @@
-# strean2 trajectory analysis test
+# strean2 trajectory analysis tests
 import scanpy as sc
 import stream2 as st2
 import pacmap
