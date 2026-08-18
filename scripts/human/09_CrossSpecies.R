@@ -74,6 +74,7 @@ ht <- Heatmap(
   top_annotation = ha,
   cluster_rows = FALSE,
   cluster_columns = TRUE,
+  column_names_rot = 90,
   column_names_gp = gpar(
     fontsize = 10,
     fontface = "bold"
@@ -104,7 +105,7 @@ ht <- Heatmap(
 
 
 png(
-  "../../results/07_snRNA/Figure6_CrossSpeciesHeatmap2.png",
+  "../../results/07_snRNA/Figure6_CrossSpeciesHeatmap3.png",
   width = 3900,
   height = 2700,
   res = 600

@@ -152,6 +152,9 @@ saveRDS(
   file.path(data_dir, "markers_res0.5.rds")
 )
 
+markers <- readRDS("../../data/markers_res0.5.rds")
+combined <- readRDS("../../data/combined_processed_resolutions.rds")
+
 write.csv(
   markers,
   file.path(data_dir, "markers_res0.5.csv"),

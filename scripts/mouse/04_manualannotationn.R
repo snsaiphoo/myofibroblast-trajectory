@@ -163,3 +163,51 @@ saveRDS(
   combined,
   file.path(data_dir, "combined_manual_annotated.rds")
 )
+
+combined <- readRDS(file.path(data_dir,"combined_manual_annotated.rds"))
+
+# Overall composition
+library(ggplot2)
+library(dplyr)
+
+composition <- combined@meta.data %>%
+  count(cell_type_manual) %>%
+  mutate(percent = n / sum(n) * 100)
+
+ggplot(composition, aes(x = reorder(cell_type_manual, percent), y = percent)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(
+    x = "Cell type",
+    y = "Percentage of cells",
+    title = "Overall cellular composition"
+  ) +
+  theme_classic() 
+
+combined$condition <- factor(
+  combined$condition,
+  levels = c("WT", "I1D", "I7D", "I30D")
+)
+
+# by condition
+composition_condition <- combined@meta.data %>%
+  count(condition, cell_type_manual) %>%
+  group_by(condition) %>%
+  mutate(percent = n / sum(n) * 100)
+
+ggplot(composition_condition,
+       aes(x = condition, y = percent, fill = cell_type_manual)) +
+  geom_col() +
+  labs(
+    x = "Condition",
+    y = "Percentage of cells",
+    fill = "Cell type",
+    title = "Mesenchymal cell composition across tendon repair"
+  ) +
+  theme_classic()  +
+  theme(
+    legend.text = element_text(size = 9),
+    legend.title = element_text(size = 10),
+    legend.key.height = unit(0.4, "cm"),
+    legend.key.width = unit(0.4, "cm")
+  )
