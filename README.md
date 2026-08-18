@@ -14,7 +14,7 @@ The human workflow focuses on fibroblast populations from healthy and ruptured t
 
 **Human snRNA-seq:**  [CZ CELLxGENE collection](https://cellxgene.cziscience.com/collections/579203e2-182f-47bc-8230-7aa47247e2a4)
 
-The mouse dataset contains samples from WT, 1D, 7D, and 30D following tendon injury, while the human dataset contains healthy and tendon rupture samples. :contentReference[oaicite:0]{index=0}
+The mouse dataset contains samples from WT, 1D, 7D, and 30D following tendon injury, while the human dataset contains healthy and tendon rupture samples.
 
 ### Software
 
