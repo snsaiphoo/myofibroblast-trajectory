@@ -147,10 +147,10 @@ rownames(human_mat) <- pathway_labels
 ############################################################
 
 colnames(human_mat) <- c(
-  "ADAM12hi",
-  "NR4A1hi",
   "ABCA10hi",
-  "FBLN1hi"
+  "ADAM12hi",
+  "FBLN1hi",
+  "NR4A1hi"
 )
 
 ############################################################
@@ -204,6 +204,6 @@ pheatmap(
   filename =
     "../../results/07_snRNA/Human_Rupture_DonorLevel_Mechanotransduction_TGFb_Heatmap.png",
   
-  width = 8,
+  width = 10,
   height = 6
 )
