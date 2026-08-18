@@ -93,6 +93,7 @@ fib <- subset(
 
 saveRDS(fib,"../../data/human_fib_sub.rds")
 
+
 DimPlot(
   fib,
   group.by = "author_cell_type",

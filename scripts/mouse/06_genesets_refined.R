@@ -25,7 +25,10 @@ selected_msigdb_sets <- c(
   "HALLMARK_INFLAMMATORY_RESPONSE",
   
   # Repair / fibroblast activation
-  "GOBP_FIBROBLAST_ACTIVATION"
+  "GOBP_FIBROBLAST_ACTIVATION",
+  
+  # Epithelial-mesenchymal transition
+  "HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION"
 )
 
 # extract gene sets

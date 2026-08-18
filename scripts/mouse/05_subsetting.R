@@ -129,6 +129,54 @@ saveRDS(
 
 mesenchymal <- readRDS(file.path(data_dir, "mesenchymal_processed_res0.4.rds"))
 
+# Overall composition
+library(ggplot2)
+library(dplyr)
+
+composition <- mesenchymal@meta.data %>%
+  count(cell_type_manual) %>%
+  mutate(percent = n / sum(n) * 100)
+
+ggplot(composition, aes(x = reorder(cell_type_manual, percent), y = percent)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(
+    x = "Cell type",
+    y = "Percentage of cells",
+    title = "Overall cellular composition"
+  ) +
+  theme_classic() 
+
+mesenchymal$condition <- factor(
+  mesenchymal$condition,
+  levels = c("WT", "I1D", "I7D", "I30D")
+)
+
+# by condition
+composition_condition <- mesenchymal@meta.data %>%
+  count(condition, cell_type_manual) %>%
+  group_by(condition) %>%
+  mutate(percent = n / sum(n) * 100)
+
+ggplot(composition_condition,
+       aes(x = condition, y = percent, fill = cell_type_manual)) +
+  geom_col() +
+  labs(
+    x = "Condition",
+    y = "Percentage of cells",
+    fill = "Cell type",
+    title = "Mesenchymal cell composition across tendon repair"
+  ) +
+  theme_classic()  +
+  theme(
+    legend.text = element_text(size = 9),
+    legend.title = element_text(size = 10),
+    legend.key.height = unit(0.4, "cm"),
+    legend.key.width = unit(0.4, "cm")
+  )
+
+
+
 # Tenocyte identity markers across all clusters
 VlnPlot(
   mesenchymal,
@@ -185,11 +233,11 @@ DimPlot(
   label = FALSE,
 )
 
-ggsave(
-  file.path(fig_dir, "mesenchymal_umap_refined_labels.png"),
-  last_plot(),
-  width = 6, height = 5, units = "in", dpi = 600
-)
+# ggsave(
+#   file.path(fig_dir, "mesenchymal_umap_refined_labels.png"),
+#   last_plot(),
+#   width = 6, height = 5, units = "in", dpi = 600
+# )
 
 # UMAP split by condition
 DimPlot(
